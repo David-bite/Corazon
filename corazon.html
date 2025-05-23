@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> <3 </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Jersey+15&display=swap" rel="stylesheet">
+
+    <style>
+        /* Estilos generales del cuerpo de la página */
+        body {
+            background-color: #1f2937; /* Color de fondo oscuro */
+            display: flex; /* Usa flexbox para alinear los elementos hijos */
+            flex-direction: column; /* Organiza los elementos en una columna (uno arriba del otro) */
+            justify-content: center; /* Centra la columna de elementos verticalmente en la pantalla */
+            align-items: center;     /* Centra los elementos horizontalmente dentro de la columna */
+            min-height: 100vh; /* Asegura que el cuerpo ocupe al menos el 100% de la altura de la ventana */
+            margin: 0; /* Elimina el margen predeterminado del body */
+            gap: 3rem; /* Añade un espacio de 3rem entre los elementos flex (el corazón y el contador) */
+            padding: 2rem; /* Añade un padding para que el contenido no toque los bordes de la ventana */
+            box-sizing: border-box; /* Asegura que el padding no aumente el tamaño total del body */
+        }
+
+        /* Contenedor del contador de tiempo */
+        .contador-container {
+            text-align: center; /* Centra el texto dentro del contenedor */
+            width: 90vw; /* Ancho del 90% del viewport */
+            max-width: 600px; /* Ancho máximo de 600px */
+        }
+
+        /* Estilo del título H1 "TE AMO" */
+        h1 {
+            font-size: 5rem; /* Tamaño de fuente grande */
+            color: #ff4141; /* Color rojo vibrante */
+            margin-bottom: 1.5rem; /* Margen inferior */
+            font-family: "Jersey 10", sans-serif; /* Fuente específica de Google Fonts */
+            font-weight: 400; /* Peso de la fuente */
+            font-style: normal; /* Estilo de la fuente */
+        }
+
+        /* Estilo del párrafo que contiene el contador */
+        #contador {
+            font-size: 1.4rem; /* Tamaño de fuente */
+            font-weight: 800; /* Peso de la fuente para que sea negrita */
+            color: #d6e3ff; /* Color de texto azul claro */
+            margin-bottom: 1rem; /* Margen inferior */
+        }
+
+        /* Estilo para los números del contador (días, horas, etc.) */
+        #contador span {
+            display: inline-block; /* Permite aplicar ancho/alto y margen/padding */
+            font-size: 2rem; /* Tamaño de fuente más grande para los números */
+            font-weight: 800; /* Negrita */
+        }
+
+        /* Estilos para el corazón hecho con CSS (.heart) */
+        .heart {
+            position: relative; /* Necesario para posicionar ::before y ::after */
+            width: 100px; /* Ancho del corazón */
+            height: 100px; /* Alto del corazón */
+            background:#ff4757; /* Color de fondo del corazón (rojo) */
+            transform: rotate(-45deg); /* Gira el div para formar la punta inferior del corazón */
+            box-shadow: -10px 10px 90px #ff4757; /* Sombra para el efecto de resplandor */
+            animation: animate .9s linear infinite; /* Aplica la animación de latido */
+            /* Ajustes para el centrado si fuese necesario, pero 'align-items: center' en body ya lo hace */
+            margin: 0 auto; /* Asegura que el corazón se centre horizontalmente dentro de su espacio disponible */
+        }
+
+        /* Pseudo-elemento ::before para la parte superior izquierda del corazón */
+        .heart::before {
+            content: ''; /* Contenido vacío para generar el elemento */
+            position: absolute; /* Posicionamiento absoluto respecto a .heart */
+            top: -50%; /* Sube el 50% de su propia altura */
+            width: 100px; /* Ajustamos el tamaño según el nuevo ancho del .heart */
+            height: 100px; /* Ajustamos el tamaño según el nuevo alto del .heart */
+            background: #ff4757; /* Mismo color de fondo */
+            border-radius: 50%; /* Crea un círculo */
+            box-shadow: -10px -10px 90px #ff4757; /* Sombra */
+        }
+
+        /* Pseudo-elemento ::after para la parte superior derecha del corazón */
+        .heart::after {
+            content: ''; /* Contenido vacío */
+            position: absolute; /* Posicionamiento absoluto respecto a .heart */
+            right: -50%; /* Mueve a la derecha el 50% de su propio ancho */
+            width: 100px; /* Ajustamos el tamaño según el nuevo ancho del .heart */
+            height: 100px; /* Ajustamos el tamaño según el nuevo alto del .heart */
+            background: #ff4757; /* Mismo color de fondo */
+            border-radius: 50%; /* Crea un círculo */
+            box-shadow: 10px 10px 90px #ff4757; /* Sombra */
+        }
+
+        /* Keyframes para la animación de latido del corazón CSS */
+        @keyframes animate {
+            0% {
+                transform: rotate(-45deg) scale(1.07); /* Ligeramente más grande al inicio */
+            }
+            80% {
+                transform: rotate(-45deg) scale(1.0); /* Vuelve al tamaño normal */
+            }
+            100% {
+                transform: rotate(-45deg) scale(0.8); /* Se encoge un poco al final (esto crea el efecto de latido) */
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="heart"></div>
+
+        <div class="contador-container">
+            <h1>TE AMO</h1>
+            <div id="contador">
+                <span id="hace"></span>Hace
+                <span id="dias">00</span> días,
+                <span id="horas">00</span> horas,
+                <span id="minutos">00</span> minutos,
+                <span id="segundos">00</span> segundos...
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Define la fecha específica a partir de la cual se contará el tiempo
+        const fechaEspecifica = new Date('2024-11-22T00:00:00'); // Formato: Año-Mes-DíaTHora:Minuto:Segundo
+
+        /**
+         * Función para actualizar el contador de tiempo.
+         * Calcula la diferencia entre la fecha actual y la fecha específica.
+         */
+        function actualizarContador() {
+            const ahora = new Date(); // Obtiene la fecha y hora actuales
+            const diferencia = ahora - fechaEspecifica; // Calcula la diferencia en milisegundos
+
+            // Si la diferencia es negativa (la fecha específica aún no ha llegado)
+            if (diferencia < 0) {
+                // Muestra "00" en todos los campos del contador
+                document.getElementById('dias').innerText = '00';
+                document.getElementById('horas').innerText = '00';
+                document.getElementById('minutos').innerText = '00';
+                document.getElementById('segundos').innerText = '00';
+                return; // Sale de la función
+            }
+
+            // Calcula los segundos, minutos, horas y días a partir de la diferencia en milisegundos
+            const segundos = Math.floor((diferencia / 1000) % 60);
+            const minutos = Math.floor((diferencia / (1000 * 60)) % 60);
+            const horas = Math.floor((diferencia / (1000 * 60 * 60)) % 24);
+            const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+
+            // Actualiza el contenido de los elementos HTML con los valores calculados
+            // padStart(2, '0') asegura que los números tengan al menos 2 dígitos, añadiendo un '0' si es necesario (ej. 5 se convierte en 05)
+            document.getElementById('dias').innerText = String(dias).padStart(2, '0');
+            document.getElementById('horas').innerText = String(horas).padStart(2, '0');
+            document.getElementById('minutos').innerText = String(minutos).padStart(2, '0');
+            document.getElementById('segundos').innerText = String(segundos).padStart(2, '0');
+        }
+
+        // Llama a la función una vez al cargar la página para mostrar el contador de inmediato
+        actualizarContador();
+        // Configura la función para que se ejecute cada 1000 milisegundos (1 segundo), actualizando el contador
+        setInterval(actualizarContador, 1000);
+    </script>
+</body>
+</html>
